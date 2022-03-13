@@ -1,0 +1,9 @@
+* Sosnowski Mateusz, Piotr Rojek; sosnowskimateusz25@gmail.com, piotrekpiotr2@gmail.com; Grupa 1ID22A.
+* Temat: Dane statystyczne
+* Technologie: Język python, Orange Data Mining (prawdopodobne rozszerzenie wykorzystywanych technologii bądz ich zmiana)
+* Realistyczny harmonogram pracy wraz z listą funkcjonalności, które zostaną zaimplementowane: -,
+* Podział prac w zespole : -,
+* Temat projektu z "Programowanie systemów rozproszonych": Łamacz haseł.
+* Tematy prac inżynierskich: 
+Mateusz Sosnowski: Projekt i implementacja aplikacji do głosowania online
+Piotr Rojekt: System rekomendacji filmów wykorzystujący metody uczenia maszynowego
