@@ -1,0 +1,1 @@
+Zdobycie informacji odnośnie pobierania meta danych na temat zawartości bazy danych, takich jak tabele, kolumny oraz relacje. Przygotowanie przykładowego programu pobierającego dane. Setup aplikacji Spring oraz Angularowej.
