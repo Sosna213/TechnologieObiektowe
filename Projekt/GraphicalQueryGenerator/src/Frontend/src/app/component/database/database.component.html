@@ -1,1 +1,27 @@
-<div>{{databaseSchema?.tableDTOS}}</div>
+<div class="col-2 h-100 d-inline-grid">
+  <mat-selection-list [multiple]="false">
+    <mat-list-option *ngFor="let table of databaseSchema?.tableDTOS" (click)="addTableToDisplay(table)">
+      {{table.name}}
+    </mat-list-option>
+  </mat-selection-list>
+</div>
+<div class="col-10 d-inline-table">
+  <div class="row col-12 table-container">
+  <mat-selection-list class="col-3 d-inline-grid" *ngFor="let table of tablesToDisplay" [multiple]="false">
+    <div class="table-content">
+      <h2>{{table.name}}</h2>
+      <hr style=>
+      <mat-list-option *ngFor="let column of table.columns" (click)="addColumnToDisplay(column)">
+        <div class="mat-form-field-flex">
+          {{column}}
+          <mat-icon class="keys-icon" color="accent" *ngIf="checkIsPrimaryKey(table,column)">key</mat-icon>
+        </div>
+      </mat-list-option>
+    </div>
+  </mat-selection-list>
+  </div>
+  <hr>
+  <div class="row query-container">
+    <div class="col-2" *ngFor="let columnName of columnToDisplay">{{columnName}}</div>
+  </div>
+</div>

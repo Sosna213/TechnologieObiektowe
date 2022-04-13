@@ -2,13 +2,15 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable, Subject} from "rxjs";
 
+export type Table = {
+  name: string;
+  columns: string[];
+  primaryKeys: string[];
+  foreignKeys: string[];
+}
+
 export type DatabaseSchema = {
-  tableDTOS: {
-    name: string;
-    columns: string[];
-    primaryKeys: string[];
-    foreignKeys: string[];
-  }[]
+  tableDTOS: Table[]
 }
 
 @Injectable({
