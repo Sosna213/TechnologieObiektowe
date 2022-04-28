@@ -1,4 +1,7 @@
-<div class="col-2 h-100 d-inline-grid">
+<div class="row generate-button">
+  <button class="button-margin" mat-raised-button color="primary">Generuj</button>
+</div>
+<div class="col-2 h-100 d-inline-grid database-tables">
   <mat-selection-list [multiple]="false">
     <mat-list-option *ngFor="let table of databaseSchema?.tableDTOS" (click)="addTableToDisplay(table)">
       {{table.name}}
@@ -11,10 +14,11 @@
     <div class="table-content">
       <h2>{{table.name}}</h2>
       <hr style=>
-      <mat-list-option *ngFor="let column of table.columns" (click)="addColumnToDisplay(column)">
+      <mat-list-option *ngFor="let column of table.columns" (click)="addDataToDisplay(column, table.name)">
         <div class="mat-form-field-flex">
           {{column}}
           <mat-icon class="keys-icon" color="accent" *ngIf="checkIsPrimaryKey(table,column)">key</mat-icon>
+          <mat-icon class="keys-icon" color="primary" *ngIf="checkIsForeignKey(table,column)">key</mat-icon>
         </div>
       </mat-list-option>
     </div>
@@ -22,6 +26,41 @@
   </div>
   <hr>
   <div class="row query-container">
-    <div class="col-2" *ngFor="let columnName of columnToDisplay">{{columnName}}</div>
+    <div class="col-1">
+      <div *ngFor="let name of dataSelectionOptions" class="row pb-6">
+        <span>{{name}}:</span>
+      </div>
+    </div>
+    <div class="col-2" *ngFor="let data of dataToDisplay">
+      <div class="row pb-6"><span>{{data.column}}</span></div>
+      <div class="row pb-6"><span>{{data.table}}</span></div>
+      <div class="row pb-6">
+        <select name="suma" style="width: 95%">
+          <option value="groupBy">Grupuj według</option>
+          <option value="sum">Suma</option>
+          <option value="avg">Średnia</option>
+          <option value="min">Minimum</option>
+          <option value="max">Maksimum</option>
+          <option value="first">Pierwszy</option>
+          <option value="last">Ostatni</option>
+        </select>
+      </div>
+      <div class="row pb-6">
+        <select name="sortuj" style="width: 95%">
+          <option value="none"></option>
+          <option value="asc">Rosnąco</option>
+          <option value="dsc">Malejąco</option>
+        </select>
+      </div>
+      <div class="row pb-6 place-content-center">
+          <input type="checkbox">
+      </div>
+      <div class="row pb-6">
+        <input style="width: 95%">
+      </div>
+      <div class="row pb-6">
+        <input style="width: 95%">
+      </div>
+    </div>
   </div>
 </div>
