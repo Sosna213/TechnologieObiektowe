@@ -47,6 +47,7 @@
           <option [value]="'avg'">Średnia</option>
           <option [value]="'min'">Minimum</option>
           <option [value]="'max'">Maksimum</option>
+          <option [value]="'count'">Policz</option>
           <option [value]="'first'">Pierwszy</option>
           <option [value]="'last'">Ostatni</option>
         </select>
@@ -55,7 +56,7 @@
         <select [(ngModel)]="data.sort" name="sortuj" style="width: 95%">
           <option value="none"></option>
           <option value="asc">Rosnąco</option>
-          <option value="dsc">Malejąco</option>
+          <option value="desc">Malejąco</option>
         </select>
       </div>
       <div class="row pb-6 place-content-center">
@@ -63,9 +64,6 @@
       </div>
       <div class="row pb-6">
         <input [(ngModel)]="data.where" style="width: 95%">
-      </div>
-      <div class="row pb-6">
-        <input style="width: 95%">
       </div>
     </div>
   </div>

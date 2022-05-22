@@ -5,9 +5,9 @@ export type TableColumn = {
   table: string;
   column: string;
   joinOptions?: JoinOption[];
-  groupBy?: string;
+  groupBy: string;
   join?: string;
-  sort?: string;
+  sort: string;
   show?: boolean;
   where?: string;
 }
@@ -26,7 +26,7 @@ export type JoinOption = {
 export class DatabaseComponent implements OnInit {
 
   databaseSchema?: DatabaseSchema;
-  dataSelectionOptions: string[] = ['Pole','Tabela','Join','Grupuj według','Sortuj','Pokaż','Kryteria','lub'];
+  dataSelectionOptions: string[] = ['Pole','Tabela','Dołącz','Grupuj według','Sortuj','Pokaż','Kryteria'];
   tablesToDisplay: Set<Table> = new Set<Table>();
   dataToDisplay: Array<TableColumn> = new Array<TableColumn>();
 
@@ -41,7 +41,6 @@ export class DatabaseComponent implements OnInit {
     });
   }
   addTableToDisplay(table: Table){
-    console.log(this.databaseSchema)
     this.tablesToDisplay.add(table);
   }
   addDataToDisplay(column: string, table: Table){
@@ -54,7 +53,6 @@ export class DatabaseComponent implements OnInit {
       sort: 'none',
       show: true,
     };
-    console.log(data);
     if(!this.dataToDisplay.reduce((contains: boolean, tableData) => JSON.stringify(tableData) === JSON.stringify(data) ? true : contains, false)){
       this.dataToDisplay.push(data);
     }
@@ -78,13 +76,43 @@ export class DatabaseComponent implements OnInit {
     return joinOptions;
   }
   generateJoin(join: JoinOption){
-    return `JOIN ${join.table} ON ${join.tableToJoin}.${join.foreignKey}=${join.table}.${join.primaryKey}`;
+    return `JOIN ${join.table} ON ${join.tableToJoin}.${join.primaryKey}=${join.table}.${join.foreignKey}`;
   }
   generateSelectSQL(){
-    console.log(`SELECT ${this.getColumns()} FROM ${this.getTables()} \n ${this.getJoins()}`)
+    console.log(`SELECT ${this.getColumns()} FROM ${this.getTables()} \n ${this.getJoins()} \n GROUP BY ${this.getGrouping()} ${this.checkExists(('HAVING'))} ${this.getHaving()} ${this.checkExists(('ORDER BY'))} ${this.getSorting()}`)
+  }
+  checkExists(condition: string){
+    switch (condition){
+      case 'ORDER BY': return this.dataToDisplay.reduce((acc: boolean, table) => table.sort != 'none' ? true : acc, false) ? `\nORDER BY` : '';
+      case 'HAVING': return this.dataToDisplay.reduce((acc: boolean, table) => table.where ? true : acc, false) ? `\nHAVING` : '';
+      default: return '';
+    }
+  }
+  getHaving():string{
+    return this.dataToDisplay.reduce((acc: string, table) => table.where ? (acc ? acc + ' OR ' + `${this.checkGrouping(table)}(${table.table}.${table.column})${table.where}` : `${this.checkGrouping(table)}(${table.table}.${table.column})${table.where}`) : acc , '');
   }
   getColumns(): string {
-    return this.dataToDisplay.reduce((acc: string, table) => acc ? acc +', ' + `${table.table}.${table.column}` : `${table.table}.${table.column}`,'');
+    return this.dataToDisplay.reduce((acc: string, table) => table.show ? (acc ? acc +', ' + `${this.checkGrouping(table)}(${table.table}.${table.column})` : `${this.checkGrouping(table)}(${table.table}.${table.column})`) : acc,'');
+  }
+  getSorting(): string{
+    return this.dataToDisplay.reduce((acc: string, table) => acc ? acc + this.checkSorting(table, true) : this.checkSorting(table, false),'');
+  }
+  checkSorting(table: TableColumn, comma: boolean): string{
+    switch (table.sort){
+      case 'none': return '';
+      case 'asc' : return comma ? `,${this.checkGrouping(table)}(${table.table}.${table.column})` : `${this.checkGrouping(table)}(${table.table}.${table.column})`;
+      case 'desc' : return comma ? `,${this.checkGrouping(table)}(${table.table}.${table.column}) DESC` : `${this.checkGrouping(table)}(${table.table}.${table.column}) DESC`;
+      default: return '';
+    }
+  }
+  checkGrouping({groupBy}: TableColumn): string{
+    return groupBy != 'none' ? groupBy : '';
+  }
+  getGrouping(){
+    return this.dataToDisplay.reduce((acc: string, table) =>acc ? acc + this.checkIsGrouped(table, true) : this.checkIsGrouped(table, false),'');
+  }
+  checkIsGrouped(table: TableColumn, comma: boolean) : string{
+    return table.groupBy === 'none' ? comma ? `,${table.table}.${table.column}`:`${table.table}.${table.column}` : '';
   }
   getTables(): string {
     let tables: Set<string> = new Set<string>();
