@@ -10,19 +10,33 @@
 </div>
 <div class="col-10 d-inline-table">
   <div class="row col-12 table-container">
-  <mat-selection-list class="col-3 d-inline-grid" *ngFor="let table of tablesToDisplay" [multiple]="false">
-    <div class="table-content">
-      <h2>{{table.name}}</h2>
-      <hr style=>
-      <mat-list-option *ngFor="let column of table.columns" (click)="addDataToDisplay(column, table)">
-        <div class="mat-form-field-flex">
-          {{column}}
-          <mat-icon class="keys-icon" color="accent" *ngIf="checkIsPrimaryKey(table,column)">key</mat-icon>
-          <mat-icon class="keys-icon" color="primary" *ngIf="checkIsForeignKey(table,column)">key</mat-icon>
-        </div>
+    <mat-selection-list disabled class="col-12 d-inline-grid" *ngIf="tablesToDisplay.size === 0" [multiple]="false">
+      <mat-list-option class="text-center">
+        Brak wybranych tabel
       </mat-list-option>
-    </div>
-  </mat-selection-list>
+    </mat-selection-list>
+    <mat-selection-list class="col-3 d-inline-grid" *ngFor="let table of tablesToDisplay" [multiple]="false">
+      <div class="table-content">
+        <div class="row">
+          <div style="place-self: center;" class="col place-content-center">
+            <span class="table-name">{{table.name}}</span>
+          </div>
+          <div class="col text-right">
+            <button mat-icon-button color="warn" (click)="deleteTableToDisplay(table)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+        <hr style=>
+        <mat-list-option *ngFor="let column of table.columns" (click)="addDataToDisplay(column, table)">
+          <div class="mat-form-field-flex">
+            {{column}}
+            <mat-icon class="keys-icon" color="accent" *ngIf="checkIsPrimaryKey(table,column)">key</mat-icon>
+            <mat-icon class="keys-icon" color="primary" *ngIf="checkIsForeignKey(table,column)">key</mat-icon>
+          </div>
+        </mat-list-option>
+      </div>
+    </mat-selection-list>
   </div>
   <hr>
   <div class="row query-container">
@@ -37,7 +51,8 @@
       <div class="row pb-6">
         <select [(ngModel)]="data.join" name="join" style="width: 95%">
           <option [value]="'none'">Brak</option>
-          <option *ngFor="let joinOption of data.joinOptions" [value]="generateJoin(joinOption)">{{joinOption.tableToJoin}}</option>
+          <option *ngFor="let joinOption of data.joinOptions"
+                  [value]="generateJoin(joinOption)">{{joinOption.tableToJoin}}</option>
         </select>
       </div>
       <div class="row pb-6">
@@ -60,10 +75,15 @@
         </select>
       </div>
       <div class="row pb-6 place-content-center">
-          <input [(ngModel)]="data.show" type="checkbox">
+        <input [(ngModel)]="data.show" type="checkbox">
       </div>
       <div class="row pb-6">
         <input [(ngModel)]="data.where" style="width: 95%">
+      </div>
+      <div style="place-content: center" class="row">
+      <button mat-icon-button color="warn" (click)="deleteDataToDisplay(data)">
+        <mat-icon>close</mat-icon>
+      </button>
       </div>
     </div>
   </div>

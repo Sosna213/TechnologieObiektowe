@@ -14,12 +14,16 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatButtonModule} from "@angular/material/button";
 import { FormsModule } from '@angular/forms';
+import { ResultModalComponent } from './component/result-modal/result-modal.component';
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatTableModule} from "@angular/material/table";
 
 @NgModule({
     declarations: [
         AppComponent,
         DatabaseComponent,
-        DatabaseComponent
+        DatabaseComponent,
+        ResultModalComponent
     ],
   imports: [
     HttpClientModule,
@@ -33,7 +37,9 @@ import { FormsModule } from '@angular/forms';
     MatFormFieldModule,
     MatCheckboxModule,
     MatButtonModule,
-    FormsModule
+    MatDialogModule,
+    FormsModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

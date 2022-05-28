@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Observable, Subject} from "rxjs";
 
 export type Table = {
@@ -32,5 +32,9 @@ export class DatabaseService {
         console.error(error);
       })
     return databaseSchema;
+  }
+
+  public getResult(sql: string) {
+    return this.http.get(`/database/result/${sql}`);
   }
 }
