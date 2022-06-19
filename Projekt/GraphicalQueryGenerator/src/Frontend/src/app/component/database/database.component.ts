@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {DatabaseSchema, DatabaseService, Table} from "../../service/database/database.service";
-import {map} from "rxjs";
 import {MatDialog} from "@angular/material/dialog";
 import {ResultModalComponent} from "../result-modal/result-modal.component";
+import {DatabaseData, DatabaseDataModalComponent} from "../database-data-modal/database-data-modal.component";
 
 export type TableColumn = {
   table: string;
@@ -28,6 +28,7 @@ export type JoinOption = {
 })
 export class DatabaseComponent implements OnInit {
 
+  databaseData?: DatabaseData;
   databaseSchema?: DatabaseSchema;
   dataSelectionOptions: string[] = ['Pole', 'Tabela', 'Dołącz', 'Grupuj według', 'Sortuj', 'Pokaż', 'Kryteria'];
   tablesToDisplay: Set<Table> = new Set<Table>();
@@ -37,15 +38,11 @@ export class DatabaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.databaseService.getDatabaseSchema().subscribe(data => {
-      this.databaseSchema = data;
 
-    }, error => {
-      console.error(error);
-    });
   }
 
   addTableToDisplay(table: Table) {
+    table.columns.unshift('*');
     this.tablesToDisplay.add(table);
   }
 
@@ -64,18 +61,35 @@ export class DatabaseComponent implements OnInit {
     }
   }
 
-  deleteDataToDisplay(data: TableColumn){
+  deleteDataToDisplay(data: TableColumn) {
     this.dataToDisplay = this.dataToDisplay.filter(table => table != data);
   }
 
-  deleteTableToDisplay(table: Table){
+  deleteTableToDisplay(table: Table) {
     this.tablesToDisplay.delete(table);
   }
 
-  openResultDialog(result: any){
+  openResultDialog(result: any) {
     const dialogRef = this.dialog.open(ResultModalComponent, {
       width: '1300px',
       data: {result: result},
+    });
+  }
+
+  openDatabaseDataModal() {
+    const dialogRef = this.dialog.open(DatabaseDataModalComponent, {
+      width: '1300px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.databaseData = result;
+      if (this.databaseData) {
+        this.databaseService.getDatabaseSchema(this.databaseData).subscribe(data => {
+          this.databaseSchema = data;
+        }, error => {
+          console.error(error);
+        });
+      }
     });
   }
 
@@ -105,12 +119,17 @@ export class DatabaseComponent implements OnInit {
   }
 
   generateSelectSQL() {
-    const sqlQuery = `SELECT ${this.getColumns()} FROM ${this.getTables()} ${this.getJoins()} GROUP BY ${this.getGrouping()} ${this.checkExists(('HAVING'))} ${this.getHaving()} ${this.checkExists(('ORDER BY'))} ${this.getSorting()}`;
-    this.databaseService.getResult(sqlQuery).subscribe(
-      result => {
-        this.openResultDialog(result);
-      }
-    )
+    const sqlQuery = `SELECT ${this.getColumns()}
+                      FROM ${this.getTables()} ${this.getJoins()}
+                        ${this.checkExists(('GROUP BY'))} ${this.getGrouping()} ${this.checkExists(('HAVING'))} ${this.getHaving()} ${this.checkExists(('ORDER BY'))} ${this.getSorting()}`;
+    console.log(sqlQuery)
+    if (this.databaseData) {
+      this.databaseService.getResult(sqlQuery, this.databaseData).subscribe(
+        result => {
+          this.openResultDialog(result);
+        }
+      )
+    }
   }
 
   checkExists(condition: string) {
@@ -119,6 +138,8 @@ export class DatabaseComponent implements OnInit {
         return this.dataToDisplay.reduce((acc: boolean, table) => table.sort != 'none' ? true : acc, false) ? `\nORDER BY` : '';
       case 'HAVING':
         return this.dataToDisplay.reduce((acc: boolean, table) => table.where ? true : acc, false) ? `\nHAVING` : '';
+      case 'GROUP BY':
+        return this.getGrouping() ? `\nGROUP BY` : '';
       default:
         return '';
     }
@@ -158,6 +179,9 @@ export class DatabaseComponent implements OnInit {
   }
 
   checkIsGrouped(table: TableColumn, comma: boolean): string {
+    if(table.column === '*'){
+      return '';
+    }
     return table.groupBy === 'none' ? comma ? `,${table.table}.${table.column}` : `${table.table}.${table.column}` : '';
   }
 

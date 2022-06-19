@@ -1,0 +1,35 @@
+<div mat-dialog-content>
+  <form class="col-12" [formGroup]="databaseData" (ngSubmit)="onSubmit()">
+    <mat-card class="full-width">
+      <mat-card-header>
+        <mat-card-title>Dane bazy</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="row">
+          <mat-form-field class="full-width" appearance="fill">
+            <input matInput placeholder="JDBC Class" formControlName="class">
+          </mat-form-field>
+        </div>
+        <div class="row">
+          <mat-form-field class="full-width" appearance="fill">
+            <input matInput placeholder="Database URL" formControlName="databaseURL">
+          </mat-form-field>
+        </div>
+        <div class="row">
+          <mat-form-field class="full-width" appearance="fill">
+            <input matInput placeholder="Nazwa użytkownika" formControlName="username">
+          </mat-form-field>
+        </div>
+        <div class="row">
+          <mat-form-field class="full-width" appearance="fill">
+            <input matInput type="password" placeholder="Hasło" formControlName="password">
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+      <mat-card-actions class="text-align-right mb-2 pr-3">
+        <button mat-button color="warn" (click)="onNoClick()">Anuluj</button>
+        <button mat-raised-button color="primary" type="submit">Akceptuj</button>
+      </mat-card-actions>
+    </mat-card>
+  </form>
+</div>

@@ -15,17 +15,17 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class DatabaseService {
 
-    private final String databaseUrl = "jdbc:postgresql://localhost:5432/VotingApplication";
-    private final String user = "postgres";
-    private final String password = "1234";
-
-
-    public DatabaseSchemaDTO getDatabaseSchema() {
+    public DatabaseSchemaDTO getDatabaseSchema(String driverClass, String databaseUrl, String user, String password) {
         DatabaseSchemaDTO databaseSchemaDTO = new DatabaseSchemaDTO();
         ArrayList<TableDTO> tableDTOS = new ArrayList<>();
         try {
-            Class.forName("org.postgresql.Driver");
-            Connection connection = DriverManager.getConnection(databaseUrl, user, password);
+            Class.forName(driverClass);
+            Connection connection;
+            if(user.isEmpty() && password.isEmpty()){
+                 connection = DriverManager.getConnection(databaseUrl);
+            } else {
+                 connection = DriverManager.getConnection(databaseUrl, user, password);
+            }
             DatabaseMetaData dbMetaData = connection.getMetaData();
             ResultSet rs = connection.getMetaData().getTables(null, null, null, new String[]{"TABLE"});
             while (rs.next()) {
@@ -61,10 +61,10 @@ public class DatabaseService {
         return databaseSchemaDTO;
     }
 
-    public JSONArray getDataUsingSelect(String SQL){
+    public JSONArray getDataUsingSelect(String SQL, String driverClass, String databaseUrl, String user, String password){
         JSONArray json = new JSONArray();
         try{
-            Class.forName("org.postgresql.Driver");
+            Class.forName(driverClass);
             Connection connection = DriverManager.getConnection(databaseUrl, user, password);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(SQL);

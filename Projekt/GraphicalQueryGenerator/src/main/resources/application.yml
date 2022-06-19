@@ -4,3 +4,10 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: 1234
+
+#    spring:
+#      datasource:
+#        url: jdbc:sqlserver://localhost:1433;databaseName=ProgramowanieObjektowe;integratedSecurity=true;
+#        driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+#        username: postgres
+#        password: 1234

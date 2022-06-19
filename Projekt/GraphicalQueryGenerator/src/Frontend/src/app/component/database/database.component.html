@@ -1,6 +1,16 @@
-<div class="row generate-button">
-  <button class="button-margin" mat-raised-button color="primary" (click)="generateSelectSQL()">Generuj</button>
+<div class="row">
+  <div class="col-10">
+    <button class="button-margin" mat-raised-button color="accent" (click)="openDatabaseDataModal()">Wybierz bazę
+      danych
+    </button>
+  </div>
+  <div class="col-2">
+    <button class="button-margin" mat-raised-button color="primary" (click)="generateSelectSQL()">
+      Generuj
+    </button>
+  </div>
 </div>
+<ng-container *ngIf="databaseSchema">
 <div class="col-2 h-100 d-inline-grid database-tables">
   <mat-selection-list [multiple]="false">
     <mat-list-option *ngFor="let table of databaseSchema?.tableDTOS" (click)="addTableToDisplay(table)">
@@ -27,9 +37,9 @@
             </button>
           </div>
         </div>
-        <hr style=>
+        <hr>
         <mat-list-option *ngFor="let column of table.columns" (click)="addDataToDisplay(column, table)">
-          <div class="mat-form-field-flex">
+          <div>
             {{column}}
             <mat-icon class="keys-icon" color="accent" *ngIf="checkIsPrimaryKey(table,column)">key</mat-icon>
             <mat-icon class="keys-icon" color="primary" *ngIf="checkIsForeignKey(table,column)">key</mat-icon>
@@ -81,10 +91,11 @@
         <input [(ngModel)]="data.where" style="width: 95%">
       </div>
       <div style="place-content: center" class="row">
-      <button mat-icon-button color="warn" (click)="deleteDataToDisplay(data)">
-        <mat-icon>close</mat-icon>
-      </button>
+        <button mat-icon-button color="warn" (click)="deleteDataToDisplay(data)">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
     </div>
   </div>
 </div>
+</ng-container>
